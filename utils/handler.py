@@ -1,5 +1,8 @@
-# from utils.get_dialogue import dialogue_chain
 from utils.get_characters import Identifier, Splitter
+from utils.get_dialogue import get_dialogue
+from utils.models import Dialogue
+from typing import List
+
 
 TEXT = """
 In the dimly lit tavern, the air thick with the scent of ale and the murmur of distant conversations, Captain Harlow and the elven rogue, Seraphina, huddled over a weathered map spread across their table. Harlow, his rugged face etched with the scars of countless battles, leaned in, his eyes narrowing as he traced a route with his calloused finger.
@@ -10,14 +13,28 @@ Seraphina, her pointed ears twitching with anticipation, flicked a lock of silve
 
 As they deliberated their next move, the tavern's raucous ambiance swirled around them, a medley of laughter and clinking tankards. The mysterious figure in the corner, cloaked in shadows, observed the duo with keen interest. Suddenly, a gravelly voice from the depths of the hood broke through, "Looking for secrets, are ye? Well, the Forgotten Peaks hold more than a few. But such knowledge comes at a cost." The duo exchanged a glance, acknowledging the impending twist in their quest.
 """
-# response = dialogue_chain.invoke({"text": TEXT})
-# print(response) 
+
 
 identity = Identifier()
-speakers = identity.get_speakers(text=TEXT)
-print(speakers)
-
 splitter = Splitter()
-paragraphs = splitter.get_paragraphs(text=TEXT)
-print(len(paragraphs))
-print(paragraphs)
+
+
+def get_speech_data(text: str):
+    paragraphs = splitter.get_paragraphs(text=text)
+
+    for paragraph in paragraphs:
+        print("Text:", paragraph)
+
+        speakers = identity.get_speakers(text=paragraph)
+        print("Speakers:", ', '.join(i.name for i in speakers))
+
+        dialogue = get_dialogue(text=paragraph)
+        if dialogue:
+            print("Dialogue:", dialogue)
+
+        item = Dialogue(text=paragraph, speakers=speakers, speech=dialogue)
+        yield item
+
+        
+
+

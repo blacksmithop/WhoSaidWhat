@@ -1,15 +1,8 @@
-from langchain.callbacks.manager import CallbackManager
-from langchain.callbacks.streaming_stdout import StreamingStdOutCallbackHandler
-from langchain.chains import LLMChain
 from langchain.prompts import PromptTemplate
 from langchain_community.llms.llamacpp import LlamaCpp
 from langchain_core.output_parsers import JsonOutputParser
 
 
-# Callbacks support token-wise streaming
-callback_manager = CallbackManager([StreamingStdOutCallbackHandler()])
-
-# Make sure the model path is correct for your system!
 llm = LlamaCpp(
     # model_path="./models/llama-2-7b-chat.Q4_K_M.gguf",
     model_path="utils/models/llama-2-7b.Q5_K_M.gguf",
@@ -19,20 +12,18 @@ llm = LlamaCpp(
     n_batch=512,
     n_ctx=1024,
     top_p=1,
-    callback_manager=callback_manager,
+    # callback_manager=callback_manager,
     verbose=True,  # Verbose is required to pass to the callback manager
     grammar_path="utils/assets/json.gbnf"
 )
 
 template = """
-<s>[INST] <<SYS>>
-You task is to identify all the speakers and their dialogues from a given excerpt of a story. Categorize the sentences as either narration or dialogue. Assign each dialogue to a speaker identified, if you cannot identify the speak name them "Unknown". Return this data in the following JSON format.
+You task is to identify all the speakers and their dialogues from a given excerpt of a story. Categorize the sentences as either narration or dialogue. Assign dialogue to the identified speaker. If you cannot identify the speak call them Unknown. Return this data in the following JSON format.
 {{
     "name": "speaker name",
     "text": "text spoken by speaker"
  }}
 
-<</SYS>>
 {text}
 """
 
@@ -42,3 +33,11 @@ dialogue_chain = prompt | llm | JsonOutputParser()
 
 
 
+def get_dialogue(text: str):
+    try:
+        dialogue = dialogue_chain.invoke({"text": text})
+        text = dialogue["text"]
+        return text
+    except Exception as e:
+        print(e)
+        return ""
