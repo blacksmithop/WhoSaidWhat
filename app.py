@@ -1,10 +1,9 @@
 import streamlit as st
-import random
-import time
 from utils.stream_messages import stream_chat
 from utils.models import Dialogue
 from utils.handler import get_speech_data
 from utils.get_annotated_text import get_annotated_speech
+from utils.preprocessing import pre_proccess_text
 from typing import List
 
 st.title("Identify Speakers from text")
@@ -20,6 +19,7 @@ for message in st.session_state.messages:
 
 # Accept user input
 if prompt := st.chat_input("Give me a conversation"):
+    prompt = pre_proccess_text(text=prompt)
     # Add user message to chat history
     # Display user message in chat message container
     with st.chat_message("user"):
