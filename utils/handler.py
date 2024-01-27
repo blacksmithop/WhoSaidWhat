@@ -20,7 +20,7 @@ splitter = Splitter()
 
 
 def get_speech_data(text: str):
-    paragraphs = splitter.get_paragraphs(text=text)
+    paragraphs = splitter.get_sentences(text=text)
 
     for paragraph in paragraphs:
         print("Text:", paragraph)

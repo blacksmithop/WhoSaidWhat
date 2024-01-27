@@ -24,6 +24,7 @@ class Identifier:
     
 
 class Splitter:
-    def get_paragraphs(self, text: str) -> List[str]:
-        parts = text.split("\n\n")
-        return parts
+    def get_sentences(self, text: str) -> List[str]:
+        doc = nlp(text)
+        sentences = [str(sent.text) for sent in doc.sents]
+        return sentences
