@@ -29,7 +29,7 @@ def get_speech_data(text: str):
         print("Speakers:", ', '.join(i.name for i in speakers))
 
         dialogue = get_dialogue(text=paragraph)
-        if dialogue:
+        if dialogue and dialogue!="":
             print("Dialogue:", dialogue)
 
         item = Dialogue(text=paragraph, speakers=speakers, speech=dialogue)

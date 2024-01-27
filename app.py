@@ -4,6 +4,7 @@ import time
 from utils.stream_messages import stream_chat
 from utils.models import Dialogue
 from utils.handler import get_speech_data
+from utils.get_annotated_text import get_annotated_speech
 from typing import List
 
 st.title("Identify Speakers from text")
@@ -42,22 +43,25 @@ if prompt := st.chat_input("Give me a conversation"):
             for i in stream_chat(text=assistant_response, obj_ref=assistant_message_text):
                 pass
             assistant_message_text.markdown(assistant_response)
-            st.divider()
 
-            st.markdown("#### Speakers")
             speakers = item.speakers
             if speakers:
                 speakers = [i.name for i in speakers]
-            st.markdown(f"\n{','.join(speakers)}")
+            st.markdown(f"> Speakers: \n{', '.join(speakers)}")
             st.divider()
 
             st.markdown("#### Dialogue")
-            assistant_response_speech = st.empty()
             assistant_response = item.speech
+
+            assistant_dialogue_speech = st.empty()
             # Simulate stream of response with milliseconds delay
-            for i in stream_chat(text=assistant_response, obj_ref=assistant_response_speech):
+            for i in stream_chat(text=assistant_response, obj_ref=assistant_dialogue_speech):
                 pass
-            assistant_response_speech.markdown(assistant_response)
+            assistant_dialogue_speech.markdown(assistant_response)
+            st.divider()
+
+            st.markdown("#### Annotation")
+            get_annotated_speech(text=prompt, speakers=speakers, speech=assistant_response)
             st.divider()
 
     # Add assistant response to chat history
