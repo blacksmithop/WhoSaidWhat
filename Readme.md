@@ -9,3 +9,10 @@
 3. Install dependencies
 
 
+### Challenges:
+
+- [ ] Model hallucinates, 
+> For instance when given excerpts from Love & Prejudice it fills in missing characters and text.
+
+- [ ] Model is identified by llama-2 but not by spacy
+  - [ ] Extract speakers by model (longer input, lcel chains etc.)

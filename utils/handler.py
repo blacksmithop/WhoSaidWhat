@@ -1,5 +1,5 @@
 from utils.get_characters import Identifier, Splitter
-from utils.get_dialogue import get_dialogue
+from utils.get_dialogue import DialogueExtractor
 from utils.models import Dialogue
 from typing import List
 
@@ -17,7 +17,7 @@ As they deliberated their next move, the tavern's raucous ambiance swirled aroun
 
 identity = Identifier()
 splitter = Splitter()
-
+extractor = DialogueExtractor()
 
 def get_speech_data(text: str):
     paragraphs = splitter.get_sentences(text=text)
@@ -28,11 +28,11 @@ def get_speech_data(text: str):
         speakers = identity.get_speakers(text=paragraph)
         print("Speakers:", ', '.join(i.name for i in speakers))
 
-        dialogue = get_dialogue(text=paragraph)
+        dialogue = extractor.get_dialogue(text=paragraph)
         if dialogue and dialogue!="":
             print("Dialogue:", dialogue)
 
-        item = Dialogue(text=paragraph, speakers=speakers, speech=dialogue)
+        item = Dialogue(text=paragraph, speakers=identity.all_speakers, speech=dialogue)
         yield item
 
         

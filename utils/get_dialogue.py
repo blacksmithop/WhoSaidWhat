@@ -18,13 +18,16 @@ llm = LlamaCpp(
 )
 
 template = """
+[INST]<>
+You are an AI assistant tasked with extracting speakers and their dialogue from text. Extract dialogue if present, do not make up text or give answers from your knowledge.
+<>
 You task is to identify all the speakers and their dialogues from a given excerpt of a story. Categorize the sentences as either narration or dialogue. Assign dialogue to the identified speaker. If you cannot identify the speak call them Unknown. Return this data in the following JSON format.
 {{
     "name": "speaker name",
     "text": "text spoken by speaker"
  }}
 
-{text}
+{text}[/INST]
 """
 
 prompt = PromptTemplate(template=template, input_variables=["text"])
@@ -32,12 +35,16 @@ prompt = PromptTemplate(template=template, input_variables=["text"])
 dialogue_chain = prompt | llm | JsonOutputParser()
 
 
-
-def get_dialogue(text: str):
-    try:
-        dialogue = dialogue_chain.invoke({"text": text})
-        text = dialogue["text"]
-        return text
-    except Exception as e:
-        print(e)
-        return ""
+class DialogueExtractor:
+    def get_dialogue(self, text: str):
+        dialogue = ""
+        try:
+            dialogue = dialogue_chain.invoke({"text": text})
+            print(dialogue)
+            dialogue = dialogue["text"]
+        except Exception as e:
+            print("Error", e)
+        if dialogue not in text:
+            print("Dialogue not in text!")
+        return dialogue
+        
